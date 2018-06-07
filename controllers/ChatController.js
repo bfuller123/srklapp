@@ -1,7 +1,8 @@
 const express = require("express");
 const axios = require("axios");
-const chatRouter = express();
 const path = require("path");
+const ioUtil = require("./util/socketIOutil");
+const chatRouter = express();
 const key = "?access_key=275b6191b8fb4c1c956473cb31b1f43c&format=1";
 const url = "http://api.ipstack.com/";
 const fields = "&fields=ip,city,country_code,region_code,zip";
@@ -23,16 +24,8 @@ function getLocation(ipAddress){
         })
 }
 
-let processChatMessage =(io) => {
-    io.on("connection", (socket) => {
-        console.log("a user has connected");
-        socket.on("disconnect", () => {
-            console.log("a user has disconnected");
-        });
-        socket.on('chat message', function(msg) {
-            console.log('message: ' + msg);
-        });
-    });
-};
+function setupIO(http){
+    ioUtil.processChatMessage(http);
+}
 
-module.exports = { chatRouter, processChatMessage };
+module.exports = { chatRouter, setupIO };
